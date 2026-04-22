@@ -41,14 +41,16 @@ import io
 
 st.set_page_config(page_title="FairCheck India", page_icon="⚖️", layout="wide", initial_sidebar_state="expanded")
 
-DARK_BG = "#0a0e1a"
-CARD_BG = "#0f1d38"
-BORDER_COLOR = "#1a2a4a"
-TEXT_COLOR = "#e0e6f0"
-ACCENT_BLUE = "#3498db"
-RISK_LOW = "#2ecc71"
-RISK_MEDIUM = "#f39c12"
-RISK_HIGH = "#e74c3c"
+DARK_BG = "#ffffff"
+CARD_BG = "#f8f9fa"
+BORDER_COLOR = "#dee2e6"
+TEXT_COLOR = "#212529"
+ACCENT_BLUE = "#0d6efd"
+ACCENT_GREEN = "#198754"
+ACCENT_RED = "#dc3545"
+RISK_LOW = "#198754"
+RISK_MEDIUM = "#ffc107"
+RISK_HIGH = "#dc3545"
 
 INDIAN_STATES = [
     'Maharashtra', 'Uttar Pradesh', 'West Bengal', 'Tamil Nadu', 'Delhi',
@@ -1118,42 +1120,49 @@ def generate_pdf_report(metrics, compliance, gaps, recs, metrics_after=None, dom
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
-* {font-family: 'IBM Plex Sans', sans-serif;}
-code, .log-terminal {font-family: 'IBM Plex Mono', monospace;}
-html, body, .stApp {background: #0a0e1a; color: #e0e6f0;}
-.stMarkdown, .stText {color: #e0e6f0;}
+* {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;}
+html, body, .stApp {background: #ffffff; color: #212529;}
+.stMarkdown, .stText {color: #212529;}
+section[data-testid="stSidebar"] {background: #f8f9fa;}
 .header-banner {
-    background: linear-gradient(135deg, #0f1d38 0%, #1a2a4a 100%);
+    background: white;
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 20px;
-    border: 1px solid #1a2a4a;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
+.header-banner h1 {color: #212529; font-weight: 300;}
 .metric-card {
-    background: #0f1d38;
-    border-radius: 8px;
-    padding: 16px;
-    border: 1px solid #1a2a4a;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
-.badge-low {background: #2ecc71; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;}
-.badge-medium {background: #f39c12; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;}
-.badge-high {background: #e74c3c; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;}
-.badge-compliant {background: #2ecc71; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;}
-.badge-partial {background: #f39c12; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;}
-.badge-noncompliant {background: #e74c3c; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;}
-.info-box {border-left: 4px solid #3498db; background: #0f1d38; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0;}
-.warn-box {border-left: 4px solid #f39c12; background: #0f1d38; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0;}
-.success-box {border-left: 4px solid #2ecc71; background: #0f1d38; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0;}
+.badge-low {background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
+.badge-medium {background: #fff3cd; color: #856404; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
+.badge-high {background: #f8d7da; color: #721c24; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
+.badge-compliant {background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
+.badge-partial {background: #fff3cd; color: #856404; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
+.badge-noncompliant {background: #f8d7da; color: #721c24; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
+.info-box {border-left: 4px solid #0d6efd; background: white; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+.warn-box {border-left: 4px solid #ffc107; background: white; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+.success-box {border-left: 4px solid #198754; background: white; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
 .section-header {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    color: #3498db;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6c757d;
     padding-bottom: 8px;
-    border-bottom: 1px solid #1a2a4a;
+    border-bottom: 2px solid #0d6efd;
     margin-bottom: 16px;
 }
+.stButton > button {
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+}
+div[data-testid="stMetricValue"] {font-size: 24px;}
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 </style>
