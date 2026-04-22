@@ -1038,27 +1038,43 @@ def generate_pdf_report(metrics, compliance, gaps, recs, metrics_after=None, dom
     story.append(Paragraph(f"Compliance Score: {compliance['pct']:.1f}% — {compliance['status']}", styles['Normal']))
     story.append(PageBreak())
     
-    story.append(Paragraph("Gaps & Recommendations", styles['SectionHeader']))
+    story.append(Paragraph("Gaps & Solutions", styles['SectionHeader']))
     story.append(Spacer(1, 12))
     
     if gaps:
-        gap_data = [["Priority", "Gap", "Effort"]]
+        gap_data = [["Priority", "Issue", "Domain"]]
         for gap in gaps[:5]:
-            gap_data.append([gap["priority"], gap["message"][:40] + "...", gap["effort"]])
+            msg = gap.get("message", gap.get("check", ""))[:35] + "..."
+            prio = gap.get("priority", "MEDIUM")
+            dom = gap.get("domain", domain)
+            gap_data.append([prio, msg, dom])
         
         gap_table = Table(gap_data, colWidths=[1.2*inch, 3*inch, 1.2*inch])
         gap_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#3498db")),
-            ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor("#e0e6f0")),
-            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#1a2a4a")),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#e74c3c")),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor("#ffffff")),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.gray),
             ('FONTSIZE', (0, 0), (-1, -1), 9),
         ]))
         story.append(gap_table)
         story.append(Spacer(1, 20))
     
+    story.append(Paragraph("Recommended Solutions:", styles['SectionHeader']))
+    story.append(Spacer(1, 8))
+    
     for i, rec in enumerate(recs[:5], 1):
-        story.append(Paragraph(f"{i}. [{rec['priority']}] {rec['recommendation']}", styles['Normal']))
-        story.append(Paragraph(f"   Effort: {rec['effort']}", styles['SmallGrey']))
+        sol = rec.get("solution", rec.get("check", ""))
+        act = rec.get("action", "")
+        timeline = rec.get("timeline", "")
+        law = rec.get("law", "")
+        
+        story.append(Paragraph(f"{i}. {sol}", styles['Normal']))
+        if act:
+            story.append(Paragraph(f"   Action: {act}", styles['SmallGrey']))
+        if timeline:
+            story.append(Paragraph(f"   Timeline: {timeline}", styles['SmallGrey']))
+        if law:
+            story.append(Paragraph(f"   Law: {law}", styles['SmallGrey']))
         story.append(Spacer(1, 8))
     
     if metrics_after:
