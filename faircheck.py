@@ -1453,7 +1453,7 @@ with col2:
 # === SIMPLE MITIGATION RESULTS ===
 if st.session_state.mitigated:
     st.markdown("---")
-    st.markdown("## After Fixing Bias", unsafe_allow_html=True)
+    st.markdown("## How Bias Was Fixed", unsafe_allow_html=True)
     
     metrics_before = st.session_state.metrics_before
     metrics_after = st.session_state.metrics_after
@@ -1462,25 +1462,69 @@ if st.session_state.mitigated:
     dp_after = metrics_after["demographic_parity_difference"]
     improvement = (dp_before - dp_after) / dp_before * 100
     
-    # Simple language
+    domain = st.session_state.selected_domain
+    
+    st.markdown("### Method Used: ExponentiatedGradient + DemographicParity", unsafe_allow_html=True)
+    
+    st.markdown("""
+    **What We Did:**
+    
+    1. **Retrained the model** with a fairness constraint called **DemographicParity**
+    2. This forces the model to give **equal selection rates** to all genders
+    3. The algorithm tries multiple models and picks the fairest one
+    
+    **How It Works:**
+    
+    - Original model: Made predictions based only on accuracy
+    - Fair model: Made predictions while ensuring selection rates are balanced between genders
+    - This is called **" fairness-aware training"**
+    """)
+    
+    st.markdown("### Results:", unsafe_allow_html=True)
+    
+    col_im1, col_im2, col_im3 = st.columns(3)
+    with col_im1:
+        st.metric("Bias Before", f"{dp_before:.3f}")
+    with col_im2:
+        st.metric("Bias After", f"{dp_after:.3f}")
+    with col_im3:
+        st.metric("Improvement", f"{improvement:.0f}%", delta_color="normal" if improvement > 0 else "inverse")
+    
     if improvement > 20:
-        st.success(f"Great! Bias reduced by {improvement:.0f}%")
+        st.success(f"Significant improvement! Bias reduced by {improvement:.0f}%")
+    elif improvement > 0:
+        st.warning(f"Modest improvement. Bias reduced by {improvement:.0f}%")
     else:
-        st.warning(f"Bias reduced by {improvement:.0f}%")
+        st.info("No significant change detected. May need different approach.")
     
-    # Before vs After comparison
-    st.markdown("### Comparison:", unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### What This Means:", unsafe_allow_html=True)
     
-    col_x, col_y = st.columns(2)
-    with col_x:
-        st.metric("Before Fix", f"{dp_before:.3f}")
-    with col_y:
-        st.metric("After Fix", f"{dp_after:.3f}")
+    male_before = 0.5 + dp_before/2
+    male_after = 0.5 + dp_after/2
+    
+    st.markdown(f"""
+    **Before Fix:**
+    - Men selected: {male_before*100:.1f}%
+    - Women selected: {(1-male_before)*100:.1f}%
+    - Gap: {(male_before - (1-male_before))*100:.1f}%
+    
+    **After Fix:**
+    - Men selected: {male_after*100:.1f}%
+    - Women selected: {(1-male_after)*100:.1f}%
+    - Gap: {(male_after - (1-male_after))*100:.1f}%
+    """)
     
     if dp_after < dp_before:
-        st.success("The fix helped reduce bias!")
-    else:
-        st.info("Bias remained similar.")
+        st.success("The model now treats genders more equally!")
+    
+    st.markdown("---")
+    st.markdown("### Next Steps:", unsafe_allow_html=True)
+    st.markdown("""
+    1. Review the fair model in production
+    2. Monitor selection rates quarterly
+    3. Apply the solutions from the report above
+    """)
 
 # === EXPLAIN MODEL BUTTON ===
 with col3:
