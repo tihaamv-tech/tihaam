@@ -17,7 +17,6 @@ import os
 
 try:
     from fetch_gov_data import load_real_data
-    from fetch_api_data import get_api_key, save_api_key
     REAL_DATA_AVAILABLE = True
 except ImportError:
     REAL_DATA_AVAILABLE = False
@@ -1052,42 +1051,18 @@ with st.sidebar:
     st.markdown("#### Data Source", unsafe_allow_html=True)
     
     if REAL_DATA_AVAILABLE:
-        api_key = get_api_key()
-        
-        col_ds1, col_ds2 = st.columns(2)
-        with col_ds1:
-            use_real = st.checkbox("Use Real Data", value=st.session_state.use_real_data)
-        with col_ds2:
-            if api_key:
-                st.success("API Key OK")
-            else:
-                st.warning("No API Key")
-        
+        use_real = st.checkbox("Use Real Government Data", value=st.session_state.use_real_data)
         if use_real:
-            if not api_key:
-                st.error("Get free API key from data.gov.in for live data!")
-                with st.expander("How to get API key"):
-                    st.markdown("""
-                    1. Go to **data.gov.in**
-                    2. Register / Login  
-                    3. Go to **My Account**
-                    4. Copy your **API Key**
-                    5. Enter below
-                    """)
-                api_input = st.text_input("Enter API Key:", type="password")
-                if api_input:
-                    save_api_key(api_input)
-                    st.success("API Key saved! Refresh page.")
-                    st.rerun()
-            else:
-                st.success("Live Government Data - " + selected_domain)
+            st.success("Using real Indian government statistics")
+        else:
+            st.info("Using sample data for demo")
         
         if use_real != st.session_state.use_real_data:
             st.session_state.use_real_data = use_real
             st.session_state.analyzed = False
     else:
         st.session_state.use_real_data = False
-        st.info("Synthetic data (demo)")
+        st.info("Sample data (demo)")
     
     st.markdown("---")
     
