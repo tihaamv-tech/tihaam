@@ -1156,12 +1156,10 @@ footer {visibility: hidden;}
 """, unsafe_allow_html=True)
 
 with st.sidebar:
-    st.markdown("### ⚖️ FairCheck India", unsafe_allow_html=True)
-    st.markdown("**AI Fairness Auditing System**")
-    st.markdown("**भारत Edition**", unsafe_allow_html=True)
-    st.markdown("— " * 20)
+    st.markdown("### FairCheck India")
+    st.markdown("Select domain and click Analyze")
+    st.markdown("---")
     
-    st.markdown("#### चुनें Domain", unsafe_allow_html=True)
     domain_options = ["Army", "Education", "Bank Loan"]
     selected_domain = st.selectbox("Domain", domain_options, 
                                 index=domain_options.index(st.session_state.selected_domain) if st.session_state.selected_domain in domain_options else 0)
@@ -1173,32 +1171,17 @@ with st.sidebar:
         st.session_state.shap_computed = False
     
     st.markdown("---")
-    st.markdown("#### Data Source", unsafe_allow_html=True)
     
     if REAL_DATA_AVAILABLE:
-        use_real = st.checkbox("Use Real Government Data", value=st.session_state.use_real_data)
-        if use_real:
-            st.success("Using real Indian government statistics")
-        else:
-            st.info("Using sample data for demo")
-        
+        use_real = st.checkbox("Use Real Data", value=st.session_state.use_real_data)
         if use_real != st.session_state.use_real_data:
             st.session_state.use_real_data = use_real
             st.session_state.analyzed = False
-    else:
-        st.session_state.use_real_data = False
-        st.info("Sample data (demo)")
     
     st.markdown("---")
+    st.markdown(f"**Samples:** 10,000 | {selected_domain}")
+    st.markdown("---")
     
-    st.markdown("— " * 20)
-    st.markdown("#### Dataset", unsafe_allow_html=True)
-    st.markdown(f"**Samples:** 10,000")
-    st.markdown(f"**Domain:** {selected_domain}")
-    st.markdown(f"**Currency:** ₹ INR")
-    
-    st.markdown("— " * 20)
-    st.markdown("#### Model", unsafe_allow_html=True)
     model_options = ["Logistic Regression", "Decision Tree", "Random Forest", "Gradient Boosting"]
     selected_model = st.selectbox("Model", model_options, 
                                 index=model_options.index(st.session_state.selected_model) if st.session_state.selected_model in model_options else 0)
@@ -1208,18 +1191,6 @@ with st.sidebar:
         st.session_state.analyzed = False
         st.session_state.mitigated = False
         st.session_state.shap_computed = False
-    
-    st.markdown("— " * 20)
-    st.markdown("#### AWS Endpoint", unsafe_allow_html=True)
-    st.markdown("🟢 Simulated: faircheck-india-prod")
-    st.markdown("`ap-south-1`")
-    
-    st.markdown("#### Audit Log", unsafe_allow_html=True)
-    log_df = st.session_state.logger.get_as_df()
-    if not log_df.empty:
-        st.dataframe(log_df, height=200, width="stretch")
-    else:
-        st.markdown("*No events logged*")
 
 st.markdown("""
 <div class="header-banner">
@@ -1635,33 +1606,12 @@ if st.button("📥 Generate PDF Report") or (st.session_state.analyzed and not s
                 mime="application/pdf"
             )
 
-# === WELCOME STATE (BEFORE ANALYSIS) ===
+# === WELCOME STATE (SIMPLE) ===
 if not st.session_state.analyzed:
-    st.markdown("""
-    <div style="text-align:center;padding:40px;">
-        <h2 style="color:#3498db;margin-bottom:24px;">FairCheck India में आपका स्वागत है</h2>
-        <p style="color:#aaa;margin-bottom:32px;">भारत AI Fairness Auditing System</p>
-        
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:600px;margin:0 auto;">
-            <div class="metric-card">
-                <div style="font-size:32px;">🎖️</div>
-                <div style="font-size:12px;">Indian Army</div>
-            </div>
-            <div class="metric-card">
-                <div style="font-size:32px;">🎓</div>
-                <div style="font-size:12px;">Education</div>
-            </div>
-            <div class="metric-card">
-                <div style="font-size:32px;">🏦</div>
-                <div style="font-size:12px;">Bank Loan</div>
-            </div>
-        </div>
-        
-        <p style="margin-top:32px;color:#666;">
-            Click <strong>Analyze</strong> button to start fairness audit
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### Welcome to FairCheck India", unsafe_allow_html=True)
+    st.markdown("Select a domain from the sidebar and click **Analyze** to check for bias")
+    st.markdown("---")
 
 # Footer
 st.markdown("---")
