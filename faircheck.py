@@ -1121,50 +1121,48 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 * {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;}
-html, body, .stApp {background: #ffffff; color: #212529;}
-.stMarkdown, .stText {color: #212529;}
-section[data-testid="stSidebar"] {background: #f8f9fa;}
+html, body, .stApp {background: #ffffff !important; color: #212529 !important;}
+.stMain {background: #ffffff !important;}
+section[data-testid="stSidebar"] {background: #f8f9fa !important;}
+section[data-testid="stSidebar"] span {color: #212529 !important;}
+section[data-testid="stSidebar"] p {color: #212529 !important;}
+[data-testid="stMetricValue"] {color: #212529 !important;}
 .header-banner {
-    background: white;
+    background: white !important;
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 20px;
     border: 1px solid #dee2e6;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
-.header-banner h1 {color: #212529; font-weight: 300;}
+.header-banner h1 {color: #212529 !important; font-weight: 300;}
+.header-banner p {color: #6c757d !important;}
 .metric-card {
-    background: white;
+    background: white !important;
     border-radius: 12px;
     padding: 20px;
     border: 1px solid #dee2e6;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
+.stAlert {background: white !important;}
+.stSuccess {background: #d4edda !important; color: #155724 !important;}
+.stWarning {background: #fff3cd !important; color: #856404 !important;}
+.stError {background: #f8d7da !important; color: #721c24 !important;}
+.stInfo {background: #cfe2ff !important; color: #084298 !important;}
 .badge-low {background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
 .badge-medium {background: #fff3cd; color: #856404; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
 .badge-high {background: #f8d7da; color: #721c24; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
 .badge-compliant {background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
 .badge-partial {background: #fff3cd; color: #856404; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
 .badge-noncompliant {background: #f8d7da; color: #721c24; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
-.info-box {border-left: 4px solid #0d6efd; background: white; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
-.warn-box {border-left: 4px solid #ffc107; background: white; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
-.success-box {border-left: 4px solid #198754; background: white; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
-.section-header {
-    font-size: 14px;
-    font-weight: 600;
-    color: #6c757d;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #0d6efd;
-    margin-bottom: 16px;
-}
-.stButton > button {
-    border-radius: 8px;
-    font-weight: 500;
-    border: none;
-}
-div[data-testid="stMetricValue"] {font-size: 24px;}
+.info-box {border-left: 4px solid #0d6efd; background: white !important; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: #212529;}
+.warn-box {border-left: 4px solid #ffc107; background: white !important; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: #212529;}
+.success-box {border-left: 4px solid #198754; background: white !important; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: #212529;}
+.section-header {font-size: 14px; font-weight: 600; color: #6c757d; padding-bottom: 8px; border-bottom: 2px solid #0d6efd; margin-bottom: 16px;}
+.stButton > button {border-radius: 8px; font-weight: 500; border: none;}
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
+div[data-testid="stMainBlockContainer"] {background: #ffffff;}
 </style>
 """, unsafe_allow_html=True)
 
