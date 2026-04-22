@@ -1305,129 +1305,97 @@ with col1:
         
         st.rerun()
 
-# === SIMPLE ANALYSIS RESULTS ===
+# === SIMPLE & BEAUTIFUL RESULTS ===
 if st.session_state.analyzed:
     st.markdown("---")
-    st.markdown("## Your Fairness Report", unsafe_allow_html=True)
     
     metrics = st.session_state.metrics_before
     gender_stats = st.session_state.get('gender_stats', {})
-    risk, risk_color, risk_badge = classify_risk(metrics["demographic_parity_difference"])
+    risk, _, _ = classify_risk(metrics["demographic_parity_difference"])
     
-    # SIMPLE SUMMARY BOX
     male_pct = gender_stats.get('male_pct', 0)
     female_pct = gender_stats.get('female_pct', 0)
     gap = abs(male_pct - female_pct)
-    
-    if risk == "LOW RISK":
-        st.success("✅ GOOD NEWS: This model appears to be fair!")
-    elif risk == "MEDIUM RISK":
-        st.warning("⚠️ CAUTION: Some bias detected")
-    else:
-        st.error("🚨 WARNING: Significant bias found!")
-    
-    # SIMPLE GENDER COMPARISON
-    st.markdown("### Who's Getting Selected?", unsafe_allow_html=True)
-    
-    col_a, col_b, col_c = st.columns(3)
-    with col_a:
-        st.metric("Men Selected", f"{male_pct:.1f}%")
-    with col_b:
-        st.metric("Women Selected", f"{female_pct:.1f}%")
-    with col_c:
-        st.metric("Difference", f"{gap:.1f}%", delta_color="inverse" if gap > 5 else "normal")
-    
-    # WHAT THIS MEANS
-    st.markdown("### What Does This Mean?", unsafe_allow_html=True)
-    
-    if gap <= 5:
-        st.info("📊 The selection is fairly balanced between men and women. This is good!")
-    elif gap <= 15:
-        st.info(f"📊 There's a {gap:.1f}% gap favoring men. This is moderate bias.")
-    else:
-        st.info(f"📊 There's a {gap:.1f}% gap favoring men. This needs attention.")
-    
-    # ACCURACY
     acc = metrics.get("overall_accuracy", 0) * 100
-    st.metric("Model Accuracy", f"{acc:.1f}%")
     
-    if acc >= 70:
-        st.success("✅ The model makes correct predictions most of the time.")
+    # === MAIN RESULT CARD ===
+    if risk == "LOW RISK":
+        st.success("✅ **GOOD NEWS: Your model is fair!**")
+    elif risk == "MEDIUM RISK":
+        st.warning("⚠️ **CAUTION: Some bias detected**")
     else:
-        st.warning("⚠️ Model accuracy could be improved.")
+        st.error("🚨 **ACTION NEEDED: Significant bias found**")
     
-    # SIMPLE COMPLIANCE
+    # === THREE BOXES ===
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="background:#1e3a5f;padding:20px;border-radius:10px;text-align:center;">
+            <h2 style="color:#3498db;margin:0;">👨 Men</h2>
+            <h1 style="color:#fff;margin:10px 0;">{:.1f}%</h1>
+            <p style="color:#888;">Selected</p>
+        </div>
+        """.format(male_pct), unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background:#1e3a5f;padding:20px;border-radius:10px;text-align:center;">
+            <h2 style="color:#e91e63;margin:0;">👩 Women</h2>
+            <h1 style="color:#fff;margin:10px 0;">{:.1f}%</h1>
+            <p style="color:#888;">Selected</p>
+        </div>
+        """.format(female_pct), unsafe_allow_html=True)
+    
+    with col3:
+        gap_color = "#e74c3c" if gap > 10 else "#f39c12" if gap > 5 else "#27ae60"
+        st.markdown("""
+        <div style="background:#1e3a5f;padding:20px;border-radius:10px;text-align:center;">
+            <h2 style="color:{};margin:0;">⚖️ Gap</h2>
+            <h1 style="color:{};margin:10px 0;">{:.1f}%</h1>
+            <p style="color:#888;">Difference</p>
+        </div>
+        """.format(gap_color, gap_color, gap), unsafe_allow_html=True)
+    
+    # === ACCURACY & COMPLIANCE ===
     st.markdown("---")
-    st.markdown("### Does This Meet Rules?", unsafe_allow_html=True)
+    col_ac, col_co = st.columns(2)
     
-    comp = st.session_state.compliance
+    with col_ac:
+        st.metric("Model Accuracy", f"{acc:.0f}%", delta_color="normal" if acc >= 70 else "inverse")
     
-    if comp["pct"] >= 87.5:
-        st.success(f"✅ PASSED: {comp['pct']:.0f}% compliant with AI rules")
+    with col_co:
+        comp = st.session_state.compliance
+        st.metric("Compliance", f"{comp['pct']:.0f}%")
+    
+    # === COMPLIANCE STATUS ===
+    if comp["pct"] >= 75:
+        st.success("✅ **Complies** with Indian AI guidelines")
     elif comp["pct"] >= 50:
-        st.warning(f"⚠️ PARTIAL: {comp['pct']:.0f}% compliant with AI rules")
+        st.warning("⚠️ **Partially Compliant**")
     else:
-        st.error(f"🚨 NEEDS WORK: Only {comp['pct']:.0f}% compliant with AI rules")
+        st.error("🚨 **Needs Fixes** to comply")
     
-    # Simple checklist
-    st.markdown("#### Quick Checklist:", unsafe_allow_html=True)
-    for check, passed in comp["checks"].items():
-        short_name = check.split("(")[0].strip()
-        if passed:
-            st.markdown(f"✅ {short_name} - OK")
-        else:
-            st.markdown(f"❌ {short_name} - Needs Fix")
-    
-    # GAPS
+    # === ISSUES TO FIX ===
     gaps = st.session_state.gaps
-    if gaps:
-        st.markdown("---")
-        st.markdown("### What Should Be Fixed?", unsafe_allow_html=True)
-        
-        for gap in gaps[:3]:
-            priority = gap["priority"]
-            icon = "🔴" if priority == "CRITICAL" else "🟡" if priority == "HIGH" else "🟢"
-            st.markdown(f"{icon} **{priority}**: {gap['message']}")
-        
-        domain_solutions = {
-            "Army": [
-                ("CRITICAL", "Gender Bias in Selection", "Implement 40% Written + 30% Physical + 30% Interview merit-based assessment",
-                              "Apply gender-blind written exam (same questions for all), remove photos from application, use anonymous candidate codes"),
-                ("HIGH", "Reduce Male/Female Gap", "Create equal opportunity cell to monitor quarterly selection ratios",
-                              "Target 30% Female recruitment in each batch, conduct women-specific career fairs"),
-                ("MEDIUM", "Physical Test Standardization", "Standardize physical test for all genders with alternative events",
-                              "Include alternative fitness standards for female candidates as per Army policy")
-            ],
-            "Education": [
-                ("CRITICAL", "Caste/Gender Bias", "Apply 70% Merit + 30% Socio-economic criteria",
-                              "Use percentile-based merit, implement EWS reservation for economically weaker sections"),
-                ("HIGH", "Female Underrepresentation", "Create Women in Tech scholarship quota",
-                              "Reserve 25% seats for female candidates in technical courses"),
-                ("MEDIUM", "Regional Disparity", "Implement state-wise quota with income criteria",
-                              "Use income-based prioritization for students from BPL families")
-            ],
-            "Bank Loan": [
-                ("CRITICAL", "Gender Bias in Approval", "Use alternative credit scoring (UPI, bill payments)",
-                              "Remove gender from credit model, use digital payment history for credit scoring"),
-                ("HIGH", "Rural/Urban Divide", "Include post-office savings, agricultural income in assessment",
-                              "Accept NPS/PPF as collateral, use Aadhaar-linked utility payments"),
-                ("MEDIUM", "Income Documentation", "Accept digital transaction proofs as income proof",
-                              "Use bank statements, UPI history for self-employed applicants")
-            ]
-        }
-        
-        current_domain = st.session_state.selected_domain
-        solutions = domain_solutions.get(current_domain, domain_solutions["Bank Loan"])
-        
-        for priority, title, solution, action in solutions:
-            color = "#e74c3c" if priority == "CRITICAL" else "#f39c12" if priority == "HIGH" else "#3498db"
-            st.markdown(f'<div class="info-box" style="border-left-color:{color};">', unsafe_allow_html=True)
-            st.markdown(f"**[{priority}]** {title}", unsafe_allow_html=True)
-            st.markdown(f"**Solution:** {solution}", unsafe_allow_html=True)
-            st.markdown(f"**Action:** {action}", unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
+    recs = st.session_state.recs
     
-    st.markdown("<br>", unsafe_allow_html=True)
+    if gaps and recs:
+        st.markdown("---")
+        st.markdown("### Issues Found:", unsafe_allow_html=True)
+        
+        for i, (gap, rec) in enumerate(zip(gaps[:3], recs[:3]), 1):
+            prio = gap.get("priority", "MEDIUM")
+            icon = "🔴" if prio == "CRITICAL" else "🟡" if prio == "HIGH" else "🟢"
+            
+            st.markdown(f"""
+            <div style="background:#1e3a5f;padding:15px;border-radius:8px;margin-bottom:10px;">
+                <b>{icon} {gap.get('check', 'Issue')}</b><br>
+                <span style="color:#888;">{rec.get('solution', '')}</span>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
     
     if st.session_state.monitor_history:
         st.markdown("##### 📈 Real-Time Monitor", unsafe_allow_html=True)
