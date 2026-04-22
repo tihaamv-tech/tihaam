@@ -1308,31 +1308,31 @@ if st.session_state.analyzed:
     
     with col1:
         st.markdown("""
-        <div style="background:#1e3a5f;padding:20px;border-radius:10px;text-align:center;">
-            <h2 style="color:#3498db;margin:0;">👨 Men</h2>
-            <h1 style="color:#fff;margin:10px 0;">{:.1f}%</h1>
+        <div style="background:white;border:1px solid #dee2e6;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <h2 style="color:#0d6efd;margin:0;">Men</h2>
+            <h1 style="color:#212529;margin:10px 0;font-size:32px;">{:.1f}%</h1>
             <p style="color:#888;">Selected</p>
         </div>
         """.format(male_pct), unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        <div style="background:#1e3a5f;padding:20px;border-radius:10px;text-align:center;">
-            <h2 style="color:#e91e63;margin:0;">👩 Women</h2>
-            <h1 style="color:#fff;margin:10px 0;">{:.1f}%</h1>
+        <div style="background:white;border:1px solid #dee2e6;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <h2 style="color:#dc3545;margin:0;">Women</h2>
+            <h1 style="color:#212529;margin:10px 0;font-size:32px;">{:.1f}%</h1>
             <p style="color:#888;">Selected</p>
         </div>
         """.format(female_pct), unsafe_allow_html=True)
     
     with col3:
-        gap_color = "#e74c3c" if gap > 10 else "#f39c12" if gap > 5 else "#27ae60"
+        gap_color = "#dc3545" if gap > 10 else "#ffc107" if gap > 5 else "#198754"
         st.markdown("""
-        <div style="background:#1e3a5f;padding:20px;border-radius:10px;text-align:center;">
-            <h2 style="color:{};margin:0;">⚖️ Gap</h2>
-            <h1 style="color:{};margin:10px 0;">{:.1f}%</h1>
+        <div style="background:white;border:1px solid #dee2e6;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <h2 style="color:#6c757d;margin:0;">Gap</h2>
+            <h1 style="color:{};margin:10px 0;font-size:32px;">{:.1f}%</h1>
             <p style="color:#888;">Difference</p>
         </div>
-        """.format(gap_color, gap_color, gap), unsafe_allow_html=True)
+        """.format(gap_color, gap), unsafe_allow_html=True)
     
     # === ACCURACY & COMPLIANCE ===
     st.markdown("---")
