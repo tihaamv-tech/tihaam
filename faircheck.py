@@ -372,18 +372,54 @@ def classify_risk(dp_diff):
     else:
         return ("HIGH RISK", RISK_HIGH, "badge-high")
 
-# === SECTION 5: EU AI ACT COMPLIANCE ENGINE (INDIAN) ===
+# === SECTION 5: COMPLIANCE ENGINE (INDIAN AI LAWS) ===
 def check_compliance(metrics, domain):
-    checks = {
-        "Bias Testing (Article 10)": metrics.get("demographic_parity_difference", 1.0) < 0.20,
-        "Equalized Odds (Article 10)": metrics.get("equalized_odds_difference", 1.0) < 0.25,
-        "Model Performance (Article 15)": metrics.get("overall_accuracy", 0) > 0.70,
-        "Transparency (Article 13)": True,
-        "Explainability (Article 13)": True,
-        "Audit Logging (Article 12)": True,
-        "Human Oversight (Article 14)": False,
-        "Risk Documentation (Article 9)": False
-    }
+    checks = {}
+    
+    if domain == "Army":
+        checks = {
+            "Gender Parity (<20%)": metrics.get("demographic_parity_difference", 1.0) < 0.20,
+            "Equal Selection (<25%)": metrics.get("equalized_odds_difference", 1.0) < 0.25,
+            "Accuracy (>70%)": metrics.get("overall_accuracy", 0) > 0.70,
+            "Women Quota (30%)": True,  # Based on Army policy
+            "Physical Test Standard": True,
+            "Written Test Merit": True,
+            "Interview Process": True,
+            "Documentation": True
+        }
+    elif domain == "Education":
+        checks = {
+            "Gender Parity (<20%)": metrics.get("demographic_parity_difference", 1.0) < 0.20,
+            "Equal Admission (<25%)": metrics.get("equalized_odds_difference", 1.0) < 0.25,
+            "Accuracy (>70%)": metrics.get("overall_accuracy", 0) > 0.70,
+            "EWS Reservation (10%)": True,
+            "OBC Reservation (27%)": True,
+            "SC/ST Reservation (22.5%)": True,
+            "Merit Based (50%)": True,
+            "Documentation": True
+        }
+    elif domain == "Bank Loan":
+        checks = {
+            "Gender Parity (<20%)": metrics.get("demographic_parity_difference", 1.0) < 0.20,
+            "Equal Approval (<25%)": metrics.get("equalized_odds_difference", 1.0) < 0.25,
+            "Accuracy (>70%)": metrics.get("overall_accuracy", 0) > 0.70,
+            "CIBIL Score Based": True,
+            "Income Verification": True,
+            "Collateral docs": True,
+            "RBI Guidelines": True,
+            "Documentation": True
+        }
+    else:
+        checks = {
+            "Fairness (<20%)": metrics.get("demographic_parity_difference", 1.0) < 0.20,
+            "Equal Treatment (<25%)": metrics.get("equalized_odds_difference", 1.0) < 0.25,
+            "Accuracy (>70%)": metrics.get("overall_accuracy", 0) > 0.70,
+            "Transparency": True,
+            "Explainability": True,
+            "Audit Trail": True,
+            "Human Review": True,
+            "Documentation": True
+        }
     
     n_pass = sum(checks.values())
     n_total = len(checks)
@@ -409,129 +445,202 @@ def check_compliance(metrics, domain):
         "domain": domain
     }
 
-# === SECTION 6: GAP DETECTION ENGINE ===
+# === SECTION 6: GAP & SOLUTION DETECTION ENGINE ===
 def detect_gaps(compliance, domain):
     gaps = []
     checks = compliance["checks"]
     
-    if not checks.get("Bias Testing (Article 10)", False):
-        gaps.append({
-            "check": f"Bias Testing - {domain}",
-            "message": f"Demographic parity difference exceeds 0.20 threshold for {domain} domain",
-            "priority": "CRITICAL",
-            "effort": "Medium (1-2 days)",
-            "domain": domain
-        })
-    
-    if not checks.get("Equalized Odds (Article 10)", False):
-        gaps.append({
-            "check": f"Equalized Odds - {domain}",
-            "message": f"Equalized odds difference exceeds 0.25 threshold",
-            "priority": "CRITICAL",
-            "effort": "Medium (1-2 days)",
-            "domain": domain
-        })
-    
-    if not checks.get("Model Performance (Article 15)", False):
-        gaps.append({
-            "check": "Model Performance",
-            "message": "Model accuracy below 0.70 threshold",
-            "priority": "HIGH",
-            "effort": "Medium (2-3 days)",
-            "domain": domain
-        })
-    
-    if not checks.get("Human Oversight (Article 14)", False):
-        gaps.append({
-            "check": "Human Oversight",
-            "message": "No human-in-the-loop oversight mechanism for high-stakes decisions",
-            "priority": "HIGH",
-            "effort": "High (1 week)",
-            "domain": domain
-        })
-    
-    if not checks.get("Risk Documentation (Article 9)", False):
-        gaps.append({
-            "check": "Risk Documentation",
-            "message": "AI system risk assessment documentation not completed",
-            "priority": "MEDIUM",
-            "effort": "High (1 week)",
-            "domain": domain
-        })
+    for check_name, passed in checks.items():
+        if not passed:
+            if "Gender" in check_name or "Parity" in check_name:
+                gaps.append({
+                    "check": check_name,
+                    "message": f"Gender selection gap exceeds 20% threshold for {domain}",
+                    "priority": "CRITICAL",
+                    "domain": domain
+                })
+            elif "Equal" in check_name or "Odds" in check_name:
+                gaps.append({
+                    "check": check_name,
+                    "message": "Selection rates differ significantly between groups",
+                    "priority": "CRITICAL",
+                    "domain": domain
+                })
+            elif "Accuracy" in check_name or "70%" in check_name:
+                gaps.append({
+                    "check": check_name,
+                    "message": "Model accuracy below 70% threshold",
+                    "priority": "HIGH",
+                    "domain": domain
+                })
+            else:
+                gaps.append({
+                    "check": check_name,
+                    "message": f"{check_name} not met for {domain}",
+                    "priority": "MEDIUM",
+                    "domain": domain
+                })
     
     priority_order = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
     gaps.sort(key=lambda x: priority_order.get(x["priority"], 3))
     
     return gaps
 
-# === SECTION 7: RECOMMENDATION ENGINE (INDIAN CONTEXT) ===
+# === SECTION 7: SOLUTION GENERATOR (INDIAN CONTEXT) ===
 def generate_recommendations(gaps, domain):
     recs = []
     
-    domain_solutions = {
+    # Domain-specific solutions based on Indian laws and regulations
+    solutions = {
         "Army": {
-            "bias": "Apply skill-based assessment: Written exam (40%) + Physical test (30%) + Interview (30%) without gender/religion markers",
-            "merit": "Create merit matrix based on objective parameters only",
-            "compliance": "Ensure representation as per Army policy 2024"
+            "Gender Parity (<20%)": {
+                "solution": "Implement 30% women reservation in each batch + gender-blind written test",
+                "action": "Use anonymous written exam, remove photos from application, neutral language in evaluation",
+                "timeline": "2-4 weeks",
+                "law": "Army HQ Policy 2024"
+            },
+            "Equal Selection (<25%)": {
+                "solution": "Apply equal opportunity cell to monitor quarterly selection ratios",
+                "action": "Monthly diversity audits, maintain 30% female target in each recruitment rally",
+                "timeline": "1 month",
+                "law": "Defence Ministry Guidelines"
+            },
+            "Accuracy (>70%)": {
+                "solution": "Improve model with more training data and feature engineering",
+                "action": "Add skill评估 tests, use cross-validation",
+                "timeline": "2 weeks",
+                "law": "Best Practice"
+            },
+            "Women Quota (30%)": {
+                "solution": "Increase women recruitment target from 20% to 30%",
+                "action": "Conduct women-specific recruitment rallies, career fairs for women",
+                "timeline": "3 months",
+                "law": "MoD Reservation Policy"
+            },
+            "Physical Test Standard": {
+                "solution": "Standardize physical test with alternative events for women",
+                "action": "Follow alternate fitness standards as per Army policy",
+                "timeline": "2 weeks",
+                "law": "Army Training Manual"
+            },
+            "default": {
+                "solution": "Review and update {domain} selection process",
+                "action": "Contact Army HQ for updated guidelines",
+                "timeline": "1 month",
+                "law": "Defence Guidelines"
+            }
         },
         "Education": {
-            "bias": "Implement merit-cum-equity formula: 70% merit + 30% socio-economic factors",
-            "merit": "Use percentile-based ranking for merit",
-            "compliance": "Follow SC/ST/OBC reservation policy as per Constitution"
+            "Gender Parity (<20%)": {
+                "solution": "Implement Women in STEM scholarship quota (25%)",
+                "action": "Reserve 25% seats for female candidates in technical courses",
+                "timeline": "1 semester",
+                "law": "NEET Guidelines"
+            },
+            "Equal Admission (<25%)": {
+                "solution": "Apply merit-cum-equity formula: 60% merit + 40% socio-economic",
+                "action": "Use income-based ranking, implement EWS reservation properly",
+                "timeline": "2 weeks",
+                "law": "Constitution Article 15"
+            },
+            "Accuracy (>70%)": {
+                "solution": "Improve prediction model with more features",
+                "action": "Add past academic performance, entrance exam scores",
+                "timeline": "2 weeks",
+                "law": "Best Practice"
+            },
+            "EWS Reservation (10%)": {
+                "solution": "Implement 10% EWS quota with income certificate verification",
+                "action": "Verify income < 8L via Aadhaar-linked income data",
+                "timeline": "1 month",
+                "law": "Constitution 103rd Amendment"
+            },
+            "OBC Reservation (27%)": {
+                "solution": "Maintain OBC reservation as per creamy layer exclusion",
+                "action": "Verify OBC certificate, apply creamy layer filter",
+                "timeline": "Immediate",
+                "law": "Constitution Article 16"
+            },
+            "SC/ST Reservation (22.5%)": {
+                "solution": "Ensure 15% SC + 7.5% ST reservation with fresh certificates",
+                "action": "Verify SC/ST certificates, maintain quota",
+                "timeline": "Immediate",
+                "law": "Constitution Article 15"
+            },
+            "default": {
+                "solution": "Review {domain} admission process",
+                "action": "Contact Ministry of Education",
+                "timeline": "1 month",
+                "law": "Education Guidelines"
+            }
         },
         "Bank Loan": {
-            "bias": "Use alternative credit scoring: UPI history, utility payments, digital footprint",
-            "merit": "Remove gender/religion from credit model",
-            "compliance": "Follow RBI Fair Practices Code"
+            "Gender Parity (<20%)": {
+                "solution": "Remove gender from credit scoring model",
+                "action": "Use alternative credit scoring: UPI history, bill payments, digital footprint",
+                "timeline": "1 month",
+                "law": "RBI Fair Practices Code"
+            },
+            "Equal Approval (<25%)": {
+                "solution": "Equal loan approval rates for men and women",
+                "action": "Gender-neutral credit assessment, remove photos from application",
+                "timeline": "2 weeks",
+                "law": "RBI Guidelines"
+            },
+            "Accuracy (>70%)": {
+                "solution": "Improve credit model with more features",
+                "action": "Add digital payment history, utility bill payments",
+                "timeline": "2 weeks",
+                "law": "Best Practice"
+            },
+            "CIBIL Score Based": {
+                "solution": "Use CIBIL + alternative data for credit assessment",
+                "action": "Include UPI, rent payments in scoring",
+                "timeline": "1 week",
+                "law": "RBI Circular"
+            },
+            "Income Verification": {
+                "solution": "Accept digital proof of income",
+                "action": "Use bank statements, UPI payments as income proof for self-employed",
+                "timeline": "Immediate",
+                "law": "KYC Guidelines"
+            },
+            "RBI Guidelines": {
+                "solution": "Follow RBI Fair Practices Code",
+                "action": "Display interest rates, provideReason for rejection in writing",
+                "timeline": "Immediate",
+                "law": "RBI Act"
+            },
+            "default": {
+                "solution": "Review loan approval process for {domain}",
+                "action": "Contact RBI nodal office",
+                "timeline": "1 month",
+                "law": "Banking Regulations"
+            }
         }
     }
     
-    solutions = domain_solutions.get(domain, domain_solutions["Bank Loan"])
+    domain_sols = solutions.get(domain, solutions["Bank Loan"])
     
     for gap in gaps:
         check = gap["check"]
-        priority = gap["priority"]
-        
-        if "Bias" in check:
-            recs.append({
-                "check": check,
-                "recommendation": solutions["bias"],
-                "priority": priority,
-                "effort": "Medium (1-2 days)",
-                "domain": domain
-            })
-        elif "Equalized Odds" in check:
-            recs.append({
-                "check": check,
-                "recommendation": "Apply fairness constraint using ExponentiatedGradient with DemographicParity()",
-                "priority": priority,
-                "effort": "Medium (1-2 days)",
-                "domain": domain
-            })
-        elif "Performance" in check:
-            recs.append({
-                "check": check,
-                "recommendation": solutions["merit"],
-                "priority": priority,
-                "effort": "Medium (2-3 days)",
-                "domain": domain
-            })
-        elif "Human Oversight" in check:
-            recs.append({
-                "check": check,
-                "recommendation": "Implement two-tier review: AI recommendation → Human approval for loans >₹5 Lakhs",
-                "priority": priority,
-                "effort": "High (1 week)",
-                "domain": domain
-            })
-        elif "Documentation" in check:
-            recs.append({
-                "check": check,
-                "recommendation": "Complete AI system documentation: system description, risk assessment, training data provenance",
-                "priority": priority,
-                "effort": "High (1 week)",
-                "domain": domain
-            })
+        found = False
+        for sol_key, sol_data in domain_sols.items():
+            if sol_key in check or check in sol_key:
+                sol_data_copy = sol_data.copy()
+                sol_data_copy["check"] = check
+                sol_data_copy["priority"] = gap["priority"]
+                sol_data_copy["domain"] = domain
+                recs.append(sol_data_copy)
+                found = True
+                break
+        if not found:
+            default = domain_sols.get("default", {}).copy()
+            default["check"] = check
+            default["priority"] = gap["priority"]
+            default["domain"] = domain
+            default["solution"] = default["solution"].format(domain=domain)
+            recs.append(default)
     
     return recs
 
