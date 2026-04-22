@@ -1120,49 +1120,123 @@ def generate_pdf_report(metrics, compliance, gaps, recs, metrics_after=None, dom
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
-* {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;}
-html, body, .stApp {background: #ffffff !important; color: #212529 !important;}
-.stMain {background: #ffffff !important;}
-section[data-testid="stSidebar"] {background: #f8f9fa !important;}
-section[data-testid="stSidebar"] span {color: #212529 !important;}
-section[data-testid="stSidebar"] p {color: #212529 !important;}
-[data-testid="stMetricValue"] {color: #212529 !important;}
+* {font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;}
+html, body, .stApp {
+    background: linear-gradient(135deg, #005293 0%, #0a1628 100%) !important;
+    color: #ffffff !important;
+}
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0a1628 0%, #0d1f35 100%) !important;
+}
+section[data-testid="stSidebar"] span, 
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] div {
+    color: #a0c4e8 !important;
+}
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: #ffffff !important;
+}
+[data-testid="stMetricValue"] {color: #ffffff !important;}
+[data-testid="stMetricLabel"] {color: #a0c4e8 !important;}
+.stSelectbox label {color: #a0c4e8 !important;}
+.stCheckbox label {color: #a0c4e8 !important;}
 .header-banner {
-    background: white !important;
+    background: linear-gradient(135deg, #005293 0%, #003d6b 100%);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+    border: 1px solid #004a82;
+    box-shadow: 0 4px 16px rgba(0,82,147,0.3);
+}
+.header-banner h1 {
+    color: #ffffff !important;
+    font-weight: 500;
+    font-size: 32px;
+    letter-spacing: 1px;
+}
+.header-banner p {color: #a0c4e8 !important;}
+.metric-card {
+    background: linear-gradient(135deg, #0a1628 0%, #0d1f35 100%);
     border-radius: 12px;
     padding: 24px;
-    margin-bottom: 20px;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #1a3050;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
-.header-banner h1 {color: #212529 !important; font-weight: 300;}
-.header-banner p {color: #6c757d !important;}
-.metric-card {
-    background: white !important;
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+.stAlert {
+    background: linear-gradient(135deg, #0a1628 0%, #0d1f35 100%) !important;
+    border: 1px solid #1a3050 !important;
 }
-.stAlert {background: white !important;}
-.stSuccess {background: #d4edda !important; color: #155724 !important;}
-.stWarning {background: #fff3cd !important; color: #856404 !important;}
-.stError {background: #f8d7da !important; color: #721c24 !important;}
-.stInfo {background: #cfe2ff !important; color: #084298 !important;}
-.badge-low {background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
-.badge-medium {background: #fff3cd; color: #856404; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
-.badge-high {background: #f8d7da; color: #721c24; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
-.badge-compliant {background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
-.badge-partial {background: #fff3cd; color: #856404; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
-.badge-noncompliant {background: #f8d7da; color: #721c24; padding: 4px 12px; border-radius: 20px; font-size: 12px;}
-.info-box {border-left: 4px solid #0d6efd; background: white !important; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: #212529;}
-.warn-box {border-left: 4px solid #ffc107; background: white !important; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: #212529;}
-.success-box {border-left: 4px solid #198754; background: white !important; padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: #212529;}
-.section-header {font-size: 14px; font-weight: 600; color: #6c757d; padding-bottom: 8px; border-bottom: 2px solid #0d6efd; margin-bottom: 16px;}
-.stButton > button {border-radius: 8px; font-weight: 500; border: none;}
+.stSuccess {
+    background: linear-gradient(135deg, #0a2818 0%, #0d3520 100%) !important;
+    border: 1px solid #1a4028 !important;
+    color: #4ade80 !important;
+}
+.stWarning {
+    background: linear-gradient(135deg, #0a2818 0%, #0d3520 100%) !important;
+    border: 1px solid #403a0a !important;
+    color: #fbbf24 !important;
+}
+.stError {
+    background: linear-gradient(135deg, #280a0a 0%, #351010 100%) !important;
+    border: 1px solid #401a1a !important;
+    color: #f87171 !important;
+}
+.stInfo {
+    background: linear-gradient(135deg, #0a2828 0%, #0d3030 100%) !important;
+    border: 1px solid #1a4040 !important;
+    color: #22d3ee !important;
+}
+.badge-low {background: #064e3b; color: #34d399; padding: 6px 14px; border-radius: 20px; font-size: 12px;}
+.badge-medium {background: #422006; color: #fbbf24; padding: 6px 14px; border-radius: 20px; font-size: 12px;}
+.badge-high {background: #450a0a; color: #f87171; padding: 6px 14px; border-radius: 20px; font-size: 12px;}
+.badge-compliant {background: #064e3b; color: #34d399; padding: 6px 14px; border-radius: 20px; font-size: 12px;}
+.badge-partial {background: #422006; color: #fbbf24; padding: 6px 14px; border-radius: 20px; font-size: 12px;}
+.badge-noncompliant {background: #450a0a; color: #f87171; padding: 6px 14px; border-radius: 20px; font-size: 12px;}
+.info-box {
+    border-left: 4px solid #0d6efd;
+    background: linear-gradient(135deg, #0a1628 0%, #0d1f35 100%);
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 0 8px 8px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    color: #e0f0ff;
+}
+.warn-box {border-left: 4px solid #fbbf24; background: linear-gradient(135deg, #0a1628 0%, #0d1f35 100%); padding: 16px; margin: 12px 0; border-radius: 0 8px 8px 0;}
+.success-box {border-left: 4px solid #34d399; background: linear-gradient(135deg, #0a1628 0%, #0d1f35 100%); padding: 16px; margin: 12px 0; border-radius: 0 8px 8px 0;}
+.section-header {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: #0d6efd;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1a3050;
+    margin-bottom: 16px;
+}
+.stButton > button {
+    background: linear-gradient(135deg, #005293 0%, #003d6b 100%) !important;
+    border-radius: 8px;
+    font-weight: 500;
+    border: 1px solid #004a82 !important;
+    color: #ffffff !important;
+}
+.stButton > button:hover {
+    background: linear-gradient(135deg, #006ab8 0%, #004a82 100%) !important;
+}
+div[data-testid="stMetricValue"] {color: #ffffff !important; font-size: 28px;}
+div[data-testid="stMetricDelta"] {color: #4ade80 !important;}
+div[data-testid="stMetricLabel"] {color: #a0c4e8 !important;}
+[data-testid="baseButton-secondary"] {
+    background: transparent !important;
+    border: 1px solid #1a3050 !important;
+    color: #a0c4e8 !important;
+}
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
-div[data-testid="stMainBlockContainer"] {background: #ffffff;}
+.stDivider {background: #1a3050 !important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -1205,8 +1279,8 @@ with st.sidebar:
 
 st.markdown("""
 <div class="header-banner">
-    <h1 style="margin:0;font-size:28px;font-weight:300;color:#212529;">⚖️ FairCheck India</h1>
-    <p style="margin:8px 0 0 0;color:#6c757d;font-size:14px;">AI Bias Detection & Fairness Auditing</p>
+    <h1 style="margin:0;font-size:28px;font-weight:300;color:#ffffff;">⚖️ FairCheck India</h1>
+    <p style="margin:8px 0 0 0;color:#a0c4e8;font-size:14px;">AI Bias Detection & Fairness Auditing System</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1306,29 +1380,29 @@ if st.session_state.analyzed:
     
     with col1:
         st.markdown("""
-        <div style="background:white;border:1px solid #dee2e6;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <h2 style="color:#0d6efd;margin:0;">Men</h2>
-            <h1 style="color:#212529;margin:10px 0;font-size:32px;">{:.1f}%</h1>
-            <p style="color:#888;">Selected</p>
+        <div style="background:linear-gradient(135deg,#0a1628,#0d1f35);border:1px solid #1a3050;border-radius:12px;padding:20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+            <h2 style="color:#60a5fa;margin:0;font-size:18px;">Men</h2>
+            <h1 style="color:#ffffff;margin:10px 0;font-size:32px;font-weight:bold;">{:.1f}%</h1>
+            <p style="color:#64748b;font-size:14px;">Selected</p>
         </div>
         """.format(male_pct), unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        <div style="background:white;border:1px solid #dee2e6;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <h2 style="color:#dc3545;margin:0;">Women</h2>
-            <h1 style="color:#212529;margin:10px 0;font-size:32px;">{:.1f}%</h1>
-            <p style="color:#888;">Selected</p>
+        <div style="background:linear-gradient(135deg,#0a1628,#0d1f35);border:1px solid #1a3050;border-radius:12px;padding:20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+            <h2 style="color:#f472b6;margin:0;font-size:18px;">Women</h2>
+            <h1 style="color:#ffffff;margin:10px 0;font-size:32px;font-weight:bold;">{:.1f}%</h1>
+            <p style="color:#64748b;font-size:14px;">Selected</p>
         </div>
         """.format(female_pct), unsafe_allow_html=True)
     
     with col3:
-        gap_color = "#dc3545" if gap > 10 else "#ffc107" if gap > 5 else "#198754"
+        gap_color = "#f87171" if gap > 10 else "#fbbf24" if gap > 5 else "#34d399"
         st.markdown("""
-        <div style="background:white;border:1px solid #dee2e6;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <h2 style="color:#6c757d;margin:0;">Gap</h2>
-            <h1 style="color:{};margin:10px 0;font-size:32px;">{:.1f}%</h1>
-            <p style="color:#888;">Difference</p>
+        <div style="background:linear-gradient(135deg,#0a1628,#0d1f35);border:1px solid #1a3050;border-radius:12px;padding:20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+            <h2 style="color:#94a3b8;margin:0;font-size:18px;">Gap</h2>
+            <h1 style="color:{};margin:10px 0;font-size:32px;font-weight:bold;">{:.1f}%</h1>
+            <p style="color:#64748b;font-size:14px;">Difference</p>
         </div>
         """.format(gap_color, gap), unsafe_allow_html=True)
     
