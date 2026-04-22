@@ -1207,15 +1207,8 @@ with st.sidebar:
 
 st.markdown("""
 <div class="header-banner">
-    <h1 style="margin:0;font-size:32px;">⚖️ FairCheck India</h1>
-    <p style="margin:8px 0 0 0;color:#aaa;">भारत AI Fairness Auditing System</p>
-    <div style="margin-top:16px;">
-        <span style="background:#3498db;color:white;padding:4px 12px;border-radius:12px;font-size:12px;margin-right:8px;">भारत Indian</span>
-        <span style="background:#9b59b6;color:white;padding:4px 12px;border-radius:12px;font-size:12px;margin-right:8px;">Fairlearn</span>
-        <span style="background:#e74c3c;color:white;padding:4px 12px;border-radius:12px;font-size:12px;margin-right:8px;">SHAP</span>
-        <span style="background:#2ecc71;color:white;padding:4px 12px;border-radius:12px;font-size:12px;margin-right:8px;">Multi-Domain</span>
-        <span style="background:#f39c12;color:white;padding:4px 12px;border-radius:12px;font-size:12px;">₹ INR</span>
-    </div>
+    <h1 style="margin:0;font-size:28px;font-weight:300;color:#212529;">⚖️ FairCheck India</h1>
+    <p style="margin:8px 0 0 0;color:#6c757d;font-size:14px;">AI Bias Detection & Fairness Auditing</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1629,7 +1622,7 @@ if not st.session_state.analyzed:
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style="text-align:center;color:#666;font-size:11px;padding:20px;">
-    FairCheck India | AI Fairness Auditing System | Made for भारत
+<div style="text-align:center;color:#999;font-size:12px;padding:16px;">
+    FairCheck India | AI Bias Detection
 </div>
 """, unsafe_allow_html=True)
