@@ -323,8 +323,19 @@ def load_real_bank_data():
 
 @st.cache_data
 def load_indian_data(domain="Army", use_real=False):
+    domain_mapping = {
+        "Army Recruitment": "Army",
+        "Education Admissions": "Education",
+        "Bank Loan": "Bank Loan",
+        "Hiring & Recruitment": "Hiring & Recruitment",
+        "University Admissions": "University Admissions",
+        "Insurance Pricing": "Insurance Pricing",
+        "Criminal Justice": "Criminal Justice"
+    }
+    
+    actual_domain = domain_mapping.get(domain, domain)
     df = generate_indian_census_data(50000)
-    df = generate_domain_outcomes(df, domain)
+    df = generate_domain_outcomes(df, actual_domain)
     
     le_dict = {}
     cat_cols = ['gender', 'state', 'education', 'occupation', 'religion', 'caste', 'income_level']
