@@ -160,6 +160,54 @@ def generate_domain_outcomes(df, domain):
         
         df['selected'] = df.apply(loan_outcome, axis=1)
     
+    elif domain == 'Hiring & Recruitment':
+        prob_base = {'Male': 0.75, 'Female': 0.68}
+        
+        def hiring_outcome(row):
+            base_prob = prob_base.get(row['gender'], 0.5)
+            age_factor = 1.0 if 25 <= row['age'] <= 45 else 0.7
+            edu_factor = 1.0 if row['education'] in ['Graduate', 'Post Graduate'] else 0.6
+            final_prob = base_prob * age_factor * edu_factor
+            return 1 if np.random.random() < final_prob else 0
+        
+        df['selected'] = df.apply(hiring_outcome, axis=1)
+    
+    elif domain == 'University Admissions':
+        prob_caste = {'General': 0.8, 'OBC': 0.72, 'SC': 0.68, 'ST': 0.65}
+        
+        def university_outcome(row):
+            caste_prob = prob_caste.get(row['caste'], 0.5)
+            edu_prob = 1.0 if row['education'] in ['Graduate', 'Post Graduate'] else 0.6
+            income_factor = 0.9 if row['income_level'] == 'BPL' else 1.0
+            final_prob = caste_prob * edu_prob * income_factor
+            return 1 if np.random.random() < final_prob else 0
+        
+        df['selected'] = df.apply(university_outcome, axis=1)
+    
+    elif domain == 'Insurance Pricing':
+        prob_gender = {'Male': 0.72, 'Female': 0.68}
+        
+        def insurance_outcome(row):
+            base_prob = prob_gender.get(row['gender'], 0.5)
+            age_factor = 1.0 if 25 <= row['age'] <= 60 else 0.5
+            income_factor = min(row['annual_income'] / 800000, 1.0)
+            final_prob = base_prob * age_factor * income_factor
+            return 1 if np.random.random() < final_prob else 0
+        
+        df['selected'] = df.apply(insurance_outcome, axis=1)
+    
+    elif domain == 'Criminal Justice':
+        prob_base = {'Male': 0.78, 'Female': 0.55}
+        
+        def criminal_outcome(row):
+            base_prob = prob_base.get(row['gender'], 0.5)
+            age_factor = 1.0 if 18 <= row['age'] <= 40 else 0.7
+            income_factor = min(row['annual_income'] / 400000, 1.0)
+            final_prob = base_prob * age_factor * income_factor * 0.8
+            return 1 if np.random.random() < min(final_prob, 0.9) else 0
+        
+        df['selected'] = df.apply(criminal_outcome, axis=1)
+    
     return df
 
 # === SECTION 12: AUDIT LOGGING SYSTEM ===
@@ -413,6 +461,50 @@ def check_compliance(metrics, domain):
             "Income Verification": True,
             "Collateral docs": True,
             "RBI Guidelines": True,
+            "Documentation": True
+        }
+    elif domain == "Hiring & Recruitment":
+        checks = {
+            "Gender Parity (<20%)": metrics.get("demographic_parity_difference", 1.0) < 0.20,
+            "Equal Selection (<25%)": metrics.get("equalized_odds_difference", 1.0) < 0.25,
+            "Accuracy (>70%)": metrics.get("overall_accuracy", 0) > 0.70,
+            "Age Neutrality": True,
+            "Resume Blind Review": True,
+            "EEOC Compliance": True,
+            "Interview Process": True,
+            "Documentation": True
+        }
+    elif domain == "University Admissions":
+        checks = {
+            "Gender Parity (<20%)": metrics.get("demographic_parity_difference", 1.0) < 0.20,
+            "Equal Admission (<25%)": metrics.get("equalized_odds_difference", 1.0) < 0.25,
+            "Accuracy (>70%)": metrics.get("overall_accuracy", 0) > 0.70,
+            "EWS Reservation (10%)": True,
+            "OBC Reservation (27%)": True,
+            "SC/ST Reservation (22.5%)": True,
+            "Title VI Compliance": True,
+            "Documentation": True
+        }
+    elif domain == "Insurance Pricing":
+        checks = {
+            "Gender Parity (<20%)": metrics.get("demographic_parity_difference", 1.0) < 0.20,
+            "Equal Premiums (<25%)": metrics.get("equalized_odds_difference", 1.0) < 0.25,
+            "Accuracy (>70%)": metrics.get("overall_accuracy", 0) > 0.70,
+            "Actuarial Justification": True,
+            "EU AI Act Compliance": True,
+            "Premium Transparency": True,
+            "Risk Assessment": True,
+            "Documentation": True
+        }
+    elif domain == "Criminal Justice":
+        checks = {
+            "Gender Parity (<20%)": metrics.get("demographic_parity_difference", 1.0) < 0.20,
+            "Equal Risk Scores (<25%)": metrics.get("equalized_odds_difference", 1.0) < 0.25,
+            "Accuracy (>70%)": metrics.get("overall_accuracy", 0) > 0.70,
+            "EU AI Act Compliance": True,
+            "Human Oversight": True,
+            "Appeal Process": True,
+            "Audit Trail": True,
             "Documentation": True
         }
     else:
@@ -1245,7 +1337,15 @@ with st.sidebar:
     st.markdown("Select domain and click Analyze")
     st.markdown("---")
     
-    domain_options = ["Army", "Education", "Bank Loan"]
+    domain_options = [
+        "Army Recruitment", 
+        "Education Admissions", 
+        "Bank Loan",
+        "Hiring & Recruitment",
+        "University Admissions", 
+        "Insurance Pricing",
+        "Criminal Justice"
+    ]
     selected_domain = st.selectbox("Domain", domain_options, 
                                 index=domain_options.index(st.session_state.selected_domain) if st.session_state.selected_domain in domain_options else 0)
     
